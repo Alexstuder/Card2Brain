@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://logback.qos.ch/manual/configuration.html -->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- Log into Files-->
+    <variable name="LOG_FILE_NAME" value="log.txt"/>
+    <variable name="LOG_HOME" value="./logs"/>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/${LOG_FILE_NAME}</file>
+        <encoder>
+            <pattern>%date %-5level [%thread] - [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- Example how to call a method
+    <appender name="CLASS" class="com.example.appender.ClassAppender">
+        <encoder>
+            <pattern>%date %-5level [%thread] - [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender> -->
+
+    <!-- Specify Loggers for different Projects-->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE"/>
+    </root>
+    <logger name="ch.zhaw.card2brain" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+</configuration>
