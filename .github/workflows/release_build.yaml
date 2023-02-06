@@ -1,0 +1,111 @@
+name: release Build
+
+on:
+  push:
+    branches: release
+  workflow_dispatch:
+
+jobs:
+  build_and_push:
+    name: Build,Release,Image,DockerHub,Deploy and Test
+    runs-on: ubuntu-latest
+    env:
+      REMOTE_HOST: 167.86.76.193
+    steps:
+      # Build a Release
+
+      - name: Checkout project
+        uses: actions/checkout@v3
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2.1.7
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 17
+          server-id: github
+      - name: Configure Git user
+        run: |
+          git config user.email "categories@card2brain.com"
+          git config user.name "Card2Brain User"
+      - name: Build Release
+        run: mvn -B release:prepare release:perform -Darguments="-Dmaven.deploy.skip=true" --file pom.xml -Pdev
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Build a Docker Image and Push to DockerHub
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Docker Build and Push to DockerHub
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: rojo1/card2brain:latest
+      # send docker-compos.yml and init.sql File to remote Host
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+      - name: Deploy docker-compose.yml with rsync
+        run: rsync -avz docker-compose.yml ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain
+      - name: Deploy init.sql with rsync
+        run: rsync -avz db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
+      - name: Execute Execute compose pull and cocker-compose up -d to start the container
+        run: ssh card2brain@$REMOTE_HOST  "docker-compose pull ; docker-compose up -d"
+      # after Releas build merge back to master with the correct Snapshot Version
+      - name: Merge release back to master
+        run: |
+          git fetch --unshallow
+          git checkout master
+          git pull
+          git merge --no-ff release -m "Auto-merge release back to master"
+          git push
+      # INstall Node on the runner
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      # Install the newman command line utility and also install the html extra reporter
+      - name: Install newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      # Make directory to upload the test results
+      - name: Make Directory for results
+        run: mkdir -p testResults
+
+
+      # Run the POSTMAN collection
+      - name: Run POSTMAN  Create user
+        run: |
+          newman run ./Postman/Card2Brain_Backen_REST_Test.postman_collection.json -e ./Postman/Card2Brain_Environment.postman_environment.json -r  htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/Card2Brain_Backend_REST_Test.html
+
+      # Upload the contents of Test Results directory to workspace
+      - name: Output the run Details
+        uses: actions/upload-artifact@v2
+        with:
+          name: RunReports
+          path: testResults
