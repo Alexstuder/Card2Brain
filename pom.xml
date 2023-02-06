@@ -16,7 +16,7 @@
 
     <properties>
         <project.scm.id>github</project.scm.id>
-        <git.repository>RJ2334/Card2Brain</git.repository>
+        <git.repository>Alexstuder/Card2Brain</git.repository>
         <java.version>17</java.version>
     </properties>
     <scm>
