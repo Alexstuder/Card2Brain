@@ -9,6 +9,7 @@ jobs:
   build_and_push:
     name: Build,Release,Image,DockerHub,Deploy and Test
     runs-on: ubuntu-latest
+    environment: Card2BrainEnvironment
     env:
       REMOTE_HOST: 152.67.70.82
     steps:
