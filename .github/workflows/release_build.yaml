@@ -71,7 +71,10 @@ jobs:
       - name: Deploy docker-compose.yml with rsync
         run: rsync -avz docker-compose.yml ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain
       - name: Deploy init.sql with rsync
-        run: rsync -avz db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
+        #run: rsync  db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
+        run: rsync -aq –rsync-path=”mkdir -p /home/card2brain/ && rsync” db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
+      #- name: Deploy init.sql with rsync
+      #  run: rsync -avz db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
       - name: Execute Execute compose pull and cocker-compose up -d to start the container
         run: ssh card2brain@$REMOTE_HOST  "docker-compose pull ; docker-compose up -d"
       # after Releas build merge back to master with the correct Snapshot Version

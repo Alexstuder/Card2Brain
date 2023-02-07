@@ -16,7 +16,7 @@ services:
       - "./db:/var/lib/mysql"
       - "./mysql-init-files/init.sql:/docker-entrypoint-initdb.d/init.sql"
   card2brain:
-    image: rojo1/card2brain
+    image: alexstuder/card2brain
     environment:
       - "SPRING_PROFILES_ACTIVE=prod"
     restart: "no"
