@@ -10,7 +10,7 @@ jobs:
     name: Build,Release,Image,DockerHub,Deploy and Test
     runs-on: ubuntu-latest
     env:
-      REMOTE_HOST: 167.86.76.193
+      REMOTE_HOST: 152.67.70.82
     steps:
       # Build a Release
 
@@ -33,8 +33,8 @@ jobs:
           server-id: github
       - name: Configure Git user
         run: |
-          git config user.email "categories@card2brain.com"
-          git config user.name "Card2Brain User"
+          git config user.email "alex@alexstuder.ch"
+          git config user.name "card2brain"
       - name: Build Release
         run: mvn -B release:prepare release:perform -Darguments="-Dmaven.deploy.skip=true" --file pom.xml -Pdev
         env:
@@ -58,7 +58,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: rojo1/card2brain:latest
+          tags: alexstuder/card2brain:latest
       # send docker-compos.yml and init.sql File to remote Host
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
