@@ -10,7 +10,7 @@
 
     <groupId>ch.zhaw</groupId>
     <artifactId>card2brain</artifactId>
-    <version>0.0.79</version>
+    <version>0.0.80-SNAPSHOT</version>
     <name>Card2Brain</name>
     <description>Card2Brain</description>
 
@@ -21,7 +21,7 @@
     </properties>
     <scm>
         <developerConnection>scm:git:https://github.com/${git.repository}.git</developerConnection>
-        <tag>card2brain-0.0.79</tag>
+        <tag>card2brain-0.0.29-SNAPSHOT</tag>
     </scm>
     <distributionManagement>
         <repository>
