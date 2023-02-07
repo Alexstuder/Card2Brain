@@ -72,7 +72,7 @@ jobs:
         run: rsync -avz docker-compose.yml ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain
       - name: Deploy init.sql with rsync
         #run: rsync  db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
-        run: rsync -aq –rsync-path=mkdir -p mysql-init-files && rsync db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
+        run: rsync -aq –rsync-path=”mkdir -p mysql-init-files && rsync” db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
       #- name: Deploy init.sql with rsync
       #  run: rsync -avz db/init.sql ${{ secrets.DEPLOY_USER }}@$REMOTE_HOST:/home/card2brain/mysql-init-files
       - name: Execute Execute compose pull and cocker-compose up -d to start the container
