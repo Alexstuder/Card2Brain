@@ -2,7 +2,7 @@ name: docker-latest arch
 
 on:
   push:
-    branches: docker
+    branches: test
 
 jobs:
   build:
