@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - 'release'
+      - 'test'
   # Allows you to run the worker manually from the Actions tab
   workflow_dispatch:
 jobs:
