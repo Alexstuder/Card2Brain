@@ -1,4 +1,4 @@
-name: release Build
+name: Build,Release,Image,DockerHub,Deploy and Test
 
 on:
   push:
@@ -8,10 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        docker_target: [ 'x86_64:linux/amd64', 'arm:linux/arm64,linux/arm/v7,linux/arm/v8']
-    name: Build,Release,Image,DockerHub,Deploy and Test
     environment: Card2BrainEnvironment
     env:
       REMOTE_HOST: 152.67.70.82
