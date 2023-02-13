@@ -10,7 +10,7 @@
 
     <groupId>ch.zhaw</groupId>
     <artifactId>card2brain</artifactId>
-    <version>0.0.98-SNAPSHOT</version>
+    <version>0.0.99-SNAPSHOT</version>
     <name>Card2Brain</name>
     <description>Card2Brain</description>
 
